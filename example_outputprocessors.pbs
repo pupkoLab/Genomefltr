@@ -1,0 +1,25 @@
+#!/bin/bash -x
+
+#SBATCH --job-name="run_OP"             # Job name
+#SBATCH --ntasks=1                    # Number of tasks (processes)
+#SBATCH --partition=pupkoweb
+#SBATCH --cpus-per-task=10
+#SBATCH --time=6-0:00
+#SBATCH --mem=60G
+#SBATCH --output="/lsweb/pupko/genomefltr/user_results/20826d8b-f80b-469d-9883-186d2ad53695/%j.out"        # Standard output and error log (%j expands to jobId)
+#SBATCH --error="/lsweb/pupko/genomefltr/user_results/20826d8b-f80b-469d-9883-186d2ad53695/%j.err"         # Separate file for standard error
+
+hostname
+echo job_name: "run_OP"
+
+
+
+source /lsweb/pupko/genomefltr/venv/bin/activate
+
+cd /lsweb/pupko/genomefltr/user_results/20826d8b-f80b-469d-9883-186d2ad53695/
+
+python /lsweb/pupko/genomefltr/KrakenHandlers/OutputProcessor.py --outputFilePath "/lsweb/pupko/genomefltr/user_results/20826d8b-f80b-469d-9883-186d2ad53695/results.txt"
+
+cat "/lsweb/pupko/genomefltr/user_results/20826d8b-f80b-469d-9883-186d2ad53695/reads.fasta" | /lsweb/pupko/genomefltr/bin/seqkit grep -f "/lsweb/pupko/genomefltr/user_results/20826d8b-f80b-469d-9883-186d2ad53695/TempUnClassifiedIds.txt" -o /lsweb/pupko/genomefltr/user_results/20826d8b-f80b-469d-9883-186d2ad53695/unclassified.fasta
+
+cat "/lsweb/pupko/genomefltr/user_results/20826d8b-f80b-469d-9883-186d2ad53695/reads.fasta" | /lsweb/pupko/genomefltr/bin/seqkit grep -f "/lsweb/pupko/genomefltr/user_results/20826d8b-f80b-469d-9883-186d2ad53695/TempClassifiedIds.txt" -o /lsweb/pupko/genomefltr/user_results/20826d8b-f80b-469d-9883-186d2ad53695/classified.fasta
